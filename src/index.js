@@ -12,12 +12,12 @@ const refs = {
   infoOfCountryEl: document.querySelector('.country-info'),
 };
 
-refs.searchEl.addEventListener('input', onSearch);
+refs.searchEl.addEventListener('input', debounce(onSearch, DEBOUNCE_DELAY));
 
 function onSearch(event) {
   event.preventDefault();
 
-  const searchValue = event.currentTarget.value;
+  const searchValue = refs.searchEl.value;
   //   refs.listCountriesEl.innerHTML = '';
   //   refs.infoOfCountryEl.innerHTML = '';
 
