@@ -1,35 +1,43 @@
 import './css/styles.css';
 
 const DEBOUNCE_DELAY = 300;
+const URL_API = `https://restcountries.com/v3.1/name/`;
+const FILTER_VALUES = `fields=name,capital,population,flags,languages`;
 
 const refs = {
-  inputEl: document.querySelector('#search-box'),
+  searchEl: document.querySelector('#search-box'),
   listCountriesEl: document.querySelector('.country-list'),
   infoOfCountryEl: document.querySelector('.country-info'),
 };
 
-fetch('https://restcountries.com/v3.1/name')
-  .then(respons => {
-    return respons.json();
-  })
-  .then(name => {
-    console.log(name);
-  })
-  .catch(error => {
-    console.log(error);
-  });
+refs.searchEl.addEventListener('input', onSearch);
 
-function markupListCountriesEl(countries) {
-  return countries
-    .map(
-      ({ name: { official }, flags: { svg } }) => `<li class="country-item">
-      <img src="${svg}" alt="flag"/>
-      ${official}
-    </li>`
-    )
-    .join('');
+function onSearch(event) {
+  event.preventDefault();
+
+  const searchValue = event.currentTarget.value;
+  fetchCountries(searchValue);
 }
-listCountriesEl.insertAdjacentHTML('beforeend', markupListCountriesEl);
+
+function fetchCountries(name) {
+  fetch(`${URL_API}${name}?${FILTER_VALUES}`)
+    .then(respons => {
+      return respons.json();
+    })
+    .then(console.log);
+}
+
+// function markupListCountriesEl(countries) {
+//   return countries
+//     .map(
+//       ({ name: { official }, flags: { svg } }) => `<li class="country-item">
+//       <img src="${svg}" alt="flag"/>
+//       ${official}
+//     </li>`
+//     )
+//     .join('');
+// }
+// listCountriesEl.insertAdjacentHTML('beforeend', markupListCountriesEl);
 
 function markupItemCountryEl({
   name: { official },
@@ -51,4 +59,4 @@ function markupItemCountryEl({
         </div>`;
 }
 
-infoOfCountryEl.insertAdjacentHTML('beforeend', markupItemCountryEl);
+// infoOfCountryEl.insertAdjacentHTML('beforeend', markupItemCountryEl);
