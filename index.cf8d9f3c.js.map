@@ -1,1 +1,0 @@
-{"mappings":"AAEA,MAEMA,EAAIC,MAAM,4CAChBC,QAAQC,IAAIH","sources":["src/index.js"],"sourcesContent":["import './css/styles.css';\n\nconst DEBOUNCE_DELAY = 300;\n\nconst r = fetch('https://restcountries.com/v3.1/name/peru');\nconsole.log(r);\n"],"names":["$1f0dc3b9307be026$var$r","fetch","console","log"],"version":3,"file":"index.cf8d9f3c.js.map"}
