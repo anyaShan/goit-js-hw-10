@@ -1,4 +1,5 @@
 import debounce from 'lodash.debounce';
+import Notiflix from 'notiflix';
 import './css/styles.css';
 
 const DEBOUNCE_DELAY = 300;
@@ -17,11 +18,14 @@ function onSearch(event) {
   event.preventDefault();
 
   const searchValue = event.currentTarget.value;
+  //   refs.listCountriesEl.innerHTML = '';
+  //   refs.infoOfCountryEl.innerHTML = '';
+
   fetchCountries(searchValue);
 }
 
-function fetchCountries(name) {
-  fetch(`${URL_API}${name}?${FILTER_VALUES}`)
+function fetchCountries(inputData) {
+  fetch(`${URL_API}${inputData}?${FILTER_VALUES}`)
     .then(respons => {
       return respons.json();
     })
@@ -32,12 +36,16 @@ function markup(allCountries) {
   let amountOfCountries = allCountries.length;
 
   if (amountOfCountries > 10) {
-    return alert('Too many matches found. Please enter a more specific name.');
+    Notiflix.Notify.failure(
+      'Too many matches found. Please enter a more specific name.'
+    );
   }
 
   if (amountOfCountries >= 2 && amountOfCountries <= 10) {
-    return markupListCountriesEl(countries);
+    return markupListCountriesEl(allCountries);
   }
+
+  //   markupItemCountryEl(allCountries);
 }
 
 // function noMarkupEl() {
@@ -45,16 +53,17 @@ function markup(allCountries) {
 // }
 
 function markupListCountriesEl(countries) {
-  return countries
+  const countriesmarkUp = countries
     .map(
       ({ name: { official }, flags: { svg } }) => `<li class="country-item">
-      <img src="${svg}" alt="flag"/>
+      <img src="${svg}" alt="flag" width=70/>
       ${official}
     </li>`
     )
     .join('');
+
+  refs.listCountriesEl.insertAdjacentHTML('beforeend', countriesmarkUp);
 }
-// refs.listCountriesEl.insertAdjacentHTML('beforeend', markupListCountriesEl);
 
 // function markupItemCountryEl({
 //   name: { official },
@@ -65,7 +74,7 @@ function markupListCountriesEl(countries) {
 // }) {
 //   const listOFLanguages = Object.values(languages);
 
-//   return `<div class="country-info">
+//   const countrymarkUp = `<div class="country-info">
 //             <h2 class="country-title">
 //                 <img src="${svg}" alt="flag" class="country-img"/>
 //                 ${official}
@@ -74,6 +83,6 @@ function markupListCountriesEl(countries) {
 //             <p class="country-text">Population: ${population}</p>
 //             <p class="country-text">Languages: ${listOFLanguages}</p>
 //         </div>`;
-// }
 
-// refs.infoOfCountryEl.insertAdjacentHTML('beforeend', markupItemCountryEl);
+//   refs.infoOfCountryEl.insertAdjacentHTML('beforeend', countrymarkUp);
+// }
