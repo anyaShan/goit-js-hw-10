@@ -1,10 +1,10 @@
 import debounce from 'lodash.debounce';
 import Notiflix from 'notiflix';
 import './css/styles.css';
+import { fetchCountries } from './js/fetchCountries';
+import { markupListCountriesEl, markupItemCountryEl } from './js/markup';
 
 const DEBOUNCE_DELAY = 300;
-const URL_API = `https://restcountries.com/v3.1/name/`;
-const FILTER_VALUES = `fields=name,capital,population,flags,languages`;
 
 const refs = {
   searchEl: document.querySelector('#search-box'),
@@ -17,72 +17,87 @@ refs.searchEl.addEventListener('input', debounce(onSearch, DEBOUNCE_DELAY));
 function onSearch(event) {
   event.preventDefault();
 
-  const searchValue = refs.searchEl.value;
-  //   refs.listCountriesEl.innerHTML = '';
-  //   refs.infoOfCountryEl.innerHTML = '';
+  const searchValue = refs.searchEl.value.trim();
 
-  fetchCountries(searchValue);
+  refs.listCountriesEl.innerHTML = '';
+  refs.infoOfCountryEl.innerHTML = '';
+
+  fetchCountries(searchValue).then(markup).catch(error);
 }
-
-function fetchCountries(inputData) {
-  fetch(`${URL_API}${inputData}?${FILTER_VALUES}`)
-    .then(respons => {
-      return respons.json();
-    })
-    .then(markup);
-}
-
 function markup(allCountries) {
   let amountOfCountries = allCountries.length;
 
   if (amountOfCountries > 10) {
-    Notiflix.Notify.failure(
-      'Too many matches found. Please enter a more specific name.'
-    );
+    return noMarkupEl();
   }
 
-  if (amountOfCountries >= 2 && amountOfCountries <= 10) {
-    return markupListCountriesEl(allCountries);
+  if (amountOfCountries > 1 && amountOfCountries <= 10) {
+    return renderListCountries(allCountries);
   }
 
-  //   markupItemCountryEl(allCountries);
+  renderItemCountry(allCountries);
 }
 
-// function noMarkupEl() {
-//   alert('Too many matches found. Please enter a more specific name.');
+function renderListCountries(allCountries) {
+  refs.infoOfCountryEl.innerHTML = '';
+
+  const markupListOfCountries = markupListCountriesEl(allCountries);
+
+  refs.listCountriesEl.insertAdjacentHTML('beforeend', markupListOfCountries);
+}
+
+function renderItemCountry(allCountries) {
+  refs.listCountriesEl.innerHTML = '';
+
+  const country = allCountries[0];
+
+  const markupOfCountry = markupItemCountryEl(country);
+
+  refs.infoOfCountryEl.insertAdjacentHTML('beforeend', markupOfCountry);
+}
+
+function noMarkupEl() {
+  Notiflix.Notify.failure(
+    'Too many matches found. Please enter a more specific name.'
+  );
+}
+
+function error() {
+  Notiflix.Notify.failure('Oops, there is no country with that name');
+}
+
+// function markup(allCountries) {
+//   let amountOfCountries = allCountries.length;
+
+//   allCountries.map(country => {
+//     if (amountOfCountries === 1) {
+//       const markupOfCountry = markupItemCountryEl(country);
+//       renderItemCountry(markupOfCountry);
+//     } else if (amountOfCountries > 1) {
+//       const markupListOfCountries = markupListCountriesEl(country);
+//       renderListCountries(markupListOfCountries);
+//     } else if (amountOfCountries > 10) {
+//       noMarkupEl();
+//     }
+//   });
 // }
 
-function markupListCountriesEl(countries) {
-  const countriesmarkUp = countries
-    .map(
-      ({ name: { official }, flags: { svg } }) => `<li class="country-item">
-      <img src="${svg}" alt="flag" width=70/>
-      ${official}
-    </li>`
-    )
-    .join('');
+// function renderListCountries(markupListOfCountries) {
+//   refs.infoOfCountryEl.innerHTML = '';
+//   refs.listCountriesEl.insertAdjacentHTML('beforeend', markupListOfCountries);
+// }
 
-  refs.listCountriesEl.insertAdjacentHTML('beforeend', countriesmarkUp);
-}
+// function renderItemCountry(markupOfCountry) {
+//   refs.listCountriesEl.innerHTML = '';
+//   refs.infoOfCountryEl.insertAdjacentHTML('beforeend', markupOfCountry);
+// }
 
-// function markupItemCountryEl({
-//   name: { official },
-//   capital,
-//   population,
-//   flags: { svg },
-//   languages,
-// }) {
-//   const listOFLanguages = Object.values(languages);
+// function noMarkupEl() {
+//   Notiflix.Notify.failure(
+//     'Too many matches found. Please enter a more specific name.'
+//   );
+// }
 
-//   const countrymarkUp = `<div class="country-info">
-//             <h2 class="country-title">
-//                 <img src="${svg}" alt="flag" class="country-img"/>
-//                 ${official}
-//             </h2>
-//             <p class="country-text">Capital: ${capital}</p>
-//             <p class="country-text">Population: ${population}</p>
-//             <p class="country-text">Languages: ${listOFLanguages}</p>
-//         </div>`;
-
-//   refs.infoOfCountryEl.insertAdjacentHTML('beforeend', countrymarkUp);
+// function error() {
+//   Notiflix.Notify.failure('Oops, there is no country with that name');
 // }
