@@ -1,6 +1,7 @@
+import './css/styles.css';
 import debounce from 'lodash.debounce';
 import Notiflix from 'notiflix';
-import './css/styles.css';
+
 import { fetchCountries } from './js/fetchCountries';
 import { markupListCountriesEl, markupItemCountryEl } from './js/markup';
 
