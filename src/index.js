@@ -58,7 +58,7 @@ function renderItemCountry(allCountries) {
 }
 
 function noMarkupEl() {
-  Notiflix.Notify.failure(
+  Notiflix.Notify.info(
     'Too many matches found. Please enter a more specific name.'
   );
 }
